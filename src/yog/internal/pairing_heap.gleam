@@ -15,18 +15,27 @@ type Tree(a) {
 }
 
 pub opaque type Heap(a) {
-  Heap(root: Tree(a), compare: fn(a, a) -> Order)
+  Heap(root: Tree(a), compare: fn(a, a) -> Order, size: Int)
 }
 
 /// Creates a new empty heap with the provided comparison function.
 pub fn new(compare: fn(a, a) -> Order) -> Heap(a) {
-  Heap(Empty, compare)
+  Heap(Empty, compare, 0)
+}
+
+/// Returns the number of elements in the heap.
+pub fn count(heap: Heap(a)) -> Int {
+  heap.size
 }
 
 /// Inserts a new item into the heap, preserving the heap property.
 /// Time complexity: O(1)
 pub fn insert(heap: Heap(a), key: a) -> Heap(a) {
-  Heap(merge_trees(Tree(key, []), heap.root, heap.compare), heap.compare)
+  Heap(
+    merge_trees(Tree(key, []), heap.root, heap.compare),
+    heap.compare,
+    heap.size + 1,
+  )
 }
 
 /// Returns the minimum element in the heap, if the heap is not empty.
@@ -43,7 +52,8 @@ pub fn find_min(heap: Heap(a)) -> Result(a, Nil) {
 /// Time complexity: O(log n) amortized
 pub fn delete_min(heap: Heap(a)) -> Result(#(a, Heap(a)), Nil) {
   case heap.root {
-    Tree(x, xs) -> Ok(#(x, Heap(merge_pairs(xs, heap.compare), heap.compare)))
+    Tree(x, xs) ->
+      Ok(#(x, Heap(merge_pairs(xs, heap.compare), heap.compare, heap.size - 1)))
     Empty -> Error(Nil)
   }
 }
@@ -54,7 +64,11 @@ pub fn delete_min(heap: Heap(a)) -> Result(#(a, Heap(a)), Nil) {
 /// Time complexity: O(1)
 pub fn merge(heap1: Heap(a), heap2: Heap(a)) -> Heap(a) {
   let compare = heap1.compare
-  Heap(merge_trees(heap1.root, heap2.root, compare), compare)
+  Heap(
+    merge_trees(heap1.root, heap2.root, compare),
+    compare,
+    heap1.size + heap2.size,
+  )
 }
 
 fn merge_trees(x: Tree(a), y: Tree(a), compare: fn(a, a) -> Order) -> Tree(a) {

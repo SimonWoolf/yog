@@ -225,7 +225,7 @@ pub fn maximum_matching_perfect_test() {
   case bipartite.partition(graph) {
     None -> should.fail()
     Some(p) -> {
-      let matching = bipartite.maximum_matching(graph, p)
+      let assert Ok(matching) = bipartite.maximum_matching(graph, p)
 
       // Perfect matching: all 4 vertices matched (2 edges)
       list.length(matching)
@@ -262,7 +262,7 @@ pub fn maximum_matching_path_test() {
   case bipartite.partition(graph) {
     None -> should.fail()
     Some(p) -> {
-      let matching = bipartite.maximum_matching(graph, p)
+      let assert Ok(matching) = bipartite.maximum_matching(graph, p)
 
       // Maximum matching size is 2 (either 1-2, 3-4 or just one edge depending on partition)
       // Actually, the maximum matching in a path is floor(n/2) = 2
@@ -293,7 +293,7 @@ pub fn maximum_matching_unbalanced_test() {
   case bipartite.partition(graph) {
     None -> should.fail()
     Some(p) -> {
-      let matching = bipartite.maximum_matching(graph, p)
+      let assert Ok(matching) = bipartite.maximum_matching(graph, p)
 
       // Maximum matching: min(2, 3) = 2
       list.length(matching)
@@ -308,7 +308,7 @@ pub fn maximum_matching_empty_graph_test() {
   case bipartite.partition(graph) {
     None -> should.fail()
     Some(p) -> {
-      let matching = bipartite.maximum_matching(graph, p)
+      let assert Ok(matching) = bipartite.maximum_matching(graph, p)
 
       list.length(matching)
       |> should.equal(0)
@@ -328,7 +328,7 @@ pub fn maximum_matching_no_edges_test() {
   case bipartite.partition(graph) {
     None -> should.fail()
     Some(p) -> {
-      let matching = bipartite.maximum_matching(graph, p)
+      let assert Ok(matching) = bipartite.maximum_matching(graph, p)
 
       list.length(matching)
       |> should.equal(0)
@@ -354,7 +354,7 @@ pub fn maximum_matching_augmenting_path_test() {
   case bipartite.partition(graph) {
     None -> should.fail()
     Some(p) -> {
-      let matching = bipartite.maximum_matching(graph, p)
+      let assert Ok(matching) = bipartite.maximum_matching(graph, p)
 
       // Maximum matching: 2 edges
       list.length(matching)
@@ -364,7 +364,7 @@ pub fn maximum_matching_augmenting_path_test() {
 }
 
 pub fn maximum_matching_directed_graph_test() {
-  // Test with directed graph (should treat as undirected for bipartite purposes)
+  // Maximum matching requires an undirected graph.
   let assert Ok(graph) =
     yog.directed()
     |> yog.add_node(1, Nil)
@@ -376,11 +376,8 @@ pub fn maximum_matching_directed_graph_test() {
   case bipartite.partition(graph) {
     None -> should.fail()
     Some(p) -> {
-      let matching = bipartite.maximum_matching(graph, p)
-
-      // Should still find a matching of size 2
-      list.length(matching)
-      |> should.equal(2)
+      bipartite.maximum_matching(graph, p)
+      |> should.equal(Error("maximum_matching/2 requires an undirected graph"))
     }
   }
 }

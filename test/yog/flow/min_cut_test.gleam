@@ -12,7 +12,7 @@ pub fn min_cut_single_edge_test() {
     |> yog.add_node(2, Nil)
     |> yog.add_edge(from: 1, to: 2, with: 5)
 
-  let result = min_cut.global_min_cut(in: graph)
+  let assert Ok(result) = min_cut.global_min_cut(in: graph)
 
   result.weight
   |> should.equal(5)
@@ -40,7 +40,7 @@ pub fn min_cut_triangle_test() {
       #(3, 1, 1),
     ])
 
-  let result = min_cut.global_min_cut(in: graph)
+  let assert Ok(result) = min_cut.global_min_cut(in: graph)
 
   result.weight
   |> should.equal(2)
@@ -63,7 +63,7 @@ pub fn min_cut_square_test() {
       #(4, 1, 1),
     ])
 
-  let result = min_cut.global_min_cut(in: graph)
+  let assert Ok(result) = min_cut.global_min_cut(in: graph)
 
   result.weight
   |> should.equal(2)
@@ -86,7 +86,7 @@ pub fn min_cut_square_with_diagonal_test() {
       #(1, 3, 1),
     ])
 
-  let result = min_cut.global_min_cut(in: graph)
+  let assert Ok(result) = min_cut.global_min_cut(in: graph)
 
   result.weight
   |> should.equal(2)
@@ -110,7 +110,7 @@ pub fn min_cut_weighted_path_test() {
       #(3, 4, 10),
     ])
 
-  let result = min_cut.global_min_cut(in: graph)
+  let assert Ok(result) = min_cut.global_min_cut(in: graph)
 
   result.weight
   |> should.equal(1)
@@ -142,7 +142,7 @@ pub fn min_cut_bottleneck_test() {
       #(3, 4, 1),
     ])
 
-  let result = min_cut.global_min_cut(in: graph)
+  let assert Ok(result) = min_cut.global_min_cut(in: graph)
 
   result.weight
   |> should.equal(1)
@@ -174,7 +174,7 @@ pub fn min_cut_k4_test() {
       #(3, 4, 1),
     ])
 
-  let result = min_cut.global_min_cut(in: graph)
+  let assert Ok(result) = min_cut.global_min_cut(in: graph)
 
   result.weight
   |> should.equal(3)
@@ -202,7 +202,7 @@ pub fn min_cut_parallel_edges_test() {
       #(3, 4, 1),
     ])
 
-  let result = min_cut.global_min_cut(in: graph)
+  let assert Ok(result) = min_cut.global_min_cut(in: graph)
 
   // Min cut should be 1 (either 2-3 or 3-4)
   result.weight
@@ -225,7 +225,7 @@ pub fn min_cut_star_graph_test() {
       #(1, 5, 1),
     ])
 
-  let result = min_cut.global_min_cut(in: graph)
+  let assert Ok(result) = min_cut.global_min_cut(in: graph)
 
   // Min cut is any single edge (separating one leaf from the rest)
   result.weight
@@ -268,7 +268,7 @@ pub fn min_cut_aoc_style_test() {
       #(3, 6, 1),
     ])
 
-  let result = min_cut.global_min_cut(in: graph)
+  let assert Ok(result) = min_cut.global_min_cut(in: graph)
 
   // The algorithm correctly identifies the three bridge edges
   result.weight
@@ -297,7 +297,7 @@ pub fn min_cut_two_nodes_test() {
     |> yog.add_node(2, Nil)
     |> yog.add_edge(from: 1, to: 2, with: 10)
 
-  let result = min_cut.global_min_cut(in: graph)
+  let assert Ok(result) = min_cut.global_min_cut(in: graph)
 
   result.weight
   |> should.equal(10)
@@ -322,7 +322,7 @@ pub fn min_cut_self_loop_test() {
       #(1, 1, 100),
     ])
 
-  let result = min_cut.global_min_cut(in: graph)
+  let assert Ok(result) = min_cut.global_min_cut(in: graph)
 
   result.weight
   |> should.equal(1)

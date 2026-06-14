@@ -16,7 +16,7 @@ pub fn mst_simple_triangle_test() {
     |> model.add_node(3, "C")
     |> model.add_edges([#(1, 2, 1), #(2, 3, 2), #(1, 3, 3)])
 
-  let result = mst.kruskal_int(graph)
+  let assert Ok(result) = mst.kruskal_int(graph)
 
   result.edge_count
   |> should.equal(2)
@@ -42,7 +42,7 @@ pub fn mst_linear_chain_test() {
     |> model.add_node(3, "C")
     |> model.add_edges([#(1, 2, 5), #(2, 3, 10)])
 
-  let result = mst.kruskal_int(graph)
+  let assert Ok(result) = mst.kruskal_int(graph)
 
   result.edge_count
   |> should.equal(2)
@@ -58,7 +58,7 @@ pub fn mst_single_edge_test() {
     |> model.add_node(2, "B")
     |> model.add_edge(from: 1, to: 2, with: 10)
 
-  let result = mst.kruskal_int(graph)
+  let assert Ok(result) = mst.kruskal_int(graph)
 
   result.edge_count
   |> should.equal(1)
@@ -83,7 +83,7 @@ pub fn mst_single_node_test() {
     model.new(Undirected)
     |> model.add_node(1, "A")
 
-  let result = mst.kruskal_int(graph)
+  let assert Ok(result) = mst.kruskal_int(graph)
 
   result.edge_count
   |> should.equal(0)
@@ -98,7 +98,7 @@ pub fn mst_single_node_test() {
 pub fn mst_empty_graph_test() {
   let graph = model.new(Undirected)
 
-  let result = mst.kruskal_int(graph)
+  let assert Ok(result) = mst.kruskal_int(graph)
 
   result.edge_count
   |> should.equal(0)
@@ -128,7 +128,7 @@ pub fn mst_square_with_diagonal_test() {
       #(2, 3, 5),
     ])
 
-  let result = mst.kruskal_int(graph)
+  let assert Ok(result) = mst.kruskal_int(graph)
 
   result.edge_count
   |> should.equal(3)
@@ -152,7 +152,7 @@ pub fn mst_classic_kruskal_test() {
       #(2, 4, 5),
     ])
 
-  let result = mst.kruskal_int(graph)
+  let assert Ok(result) = mst.kruskal_int(graph)
 
   result.edge_count
   |> should.equal(3)
@@ -177,7 +177,7 @@ pub fn mst_pentagon_test() {
       #(5, 1, 5),
     ])
 
-  let result = mst.kruskal_int(graph)
+  let assert Ok(result) = mst.kruskal_int(graph)
 
   result.edge_count
   |> should.equal(4)
@@ -197,7 +197,7 @@ pub fn mst_disconnected_two_components_test() {
     |> model.add_node(4, "D")
     |> model.add_edges([#(1, 2, 1), #(3, 4, 2)])
 
-  let result = mst.kruskal_int(graph)
+  let assert Ok(result) = mst.kruskal_int(graph)
 
   result.edge_count
   |> should.equal(2)
@@ -217,7 +217,7 @@ pub fn mst_disconnected_three_components_test() {
     |> model.add_node(6, "F")
     |> model.add_edges([#(1, 2, 1), #(3, 4, 2), #(5, 6, 3)])
 
-  let result = mst.kruskal_int(graph)
+  let assert Ok(result) = mst.kruskal_int(graph)
 
   result.edge_count
   |> should.equal(3)
@@ -232,7 +232,7 @@ pub fn mst_with_isolated_nodes_test() {
     |> model.add_node(4, "D")
     |> model.add_edge(from: 1, to: 2, with: 1)
 
-  let result = mst.kruskal_int(graph)
+  let assert Ok(result) = mst.kruskal_int(graph)
 
   result.edge_count
   |> should.equal(1)
@@ -249,7 +249,7 @@ pub fn mst_all_same_weights_test() {
     |> model.add_node(4, "D")
     |> model.add_edges([#(1, 2, 5), #(2, 3, 5), #(3, 4, 5), #(1, 4, 5)])
 
-  let result = mst.kruskal_int(graph)
+  let assert Ok(result) = mst.kruskal_int(graph)
 
   result.edge_count
   |> should.equal(3)
@@ -266,7 +266,7 @@ pub fn mst_zero_weight_edges_test() {
     |> model.add_node(3, "C")
     |> model.add_edges([#(1, 2, 0), #(2, 3, 0)])
 
-  let result = mst.kruskal_int(graph)
+  let assert Ok(result) = mst.kruskal_int(graph)
 
   result.edge_count
   |> should.equal(2)
@@ -293,7 +293,7 @@ pub fn mst_complete_graph_k4_test() {
       #(3, 4, 6),
     ])
 
-  let result = mst.kruskal_int(graph)
+  let assert Ok(result) = mst.kruskal_int(graph)
 
   result.edge_count
   |> should.equal(3)
@@ -323,7 +323,7 @@ pub fn mst_complete_graph_k5_test() {
       #(4, 5, 10),
     ])
 
-  let result = mst.kruskal_int(graph)
+  let assert Ok(result) = mst.kruskal_int(graph)
 
   result.edge_count
   |> should.equal(4)
@@ -342,7 +342,7 @@ pub fn mst_avoids_cycle_test() {
     |> model.add_node(3, "C")
     |> model.add_edges([#(1, 2, 1), #(2, 3, 1), #(3, 1, 100)])
 
-  let result = mst.kruskal_int(graph)
+  let assert Ok(result) = mst.kruskal_int(graph)
 
   result.edge_count
   |> should.equal(2)
@@ -380,7 +380,7 @@ pub fn mst_larger_graph_test() {
       #(5, 10, 50),
     ])
 
-  let result = mst.kruskal_int(graph)
+  let assert Ok(result) = mst.kruskal_int(graph)
 
   result.edge_count
   |> should.equal(9)
@@ -398,7 +398,7 @@ pub fn mst_with_self_loop_test() {
     |> model.add_node(2, "B")
     |> model.add_edges([#(1, 1, 1), #(1, 2, 2)])
 
-  let result = mst.kruskal_int(graph)
+  let assert Ok(result) = mst.kruskal_int(graph)
 
   result.edge_count
   |> should.equal(1)
@@ -425,7 +425,7 @@ pub fn prim_simple_triangle_test() {
     |> model.add_node(3, "C")
     |> model.add_edges([#(1, 2, 1), #(2, 3, 2), #(1, 3, 3)])
 
-  let result = mst.prim_int(graph)
+  let assert Ok(result) = mst.prim_int(graph)
 
   result.edge_count
   |> should.equal(2)
@@ -442,7 +442,7 @@ pub fn prim_linear_chain_test() {
     |> model.add_node(3, "C")
     |> model.add_edges([#(1, 2, 5), #(2, 3, 10)])
 
-  let result = mst.prim_int(graph)
+  let assert Ok(result) = mst.prim_int(graph)
 
   result.edge_count
   |> should.equal(2)
@@ -458,7 +458,7 @@ pub fn prim_single_edge_test() {
     |> model.add_node(2, "B")
     |> model.add_edge(from: 1, to: 2, with: 10)
 
-  let result = mst.prim_int(graph)
+  let assert Ok(result) = mst.prim_int(graph)
 
   result.edge_count
   |> should.equal(1)
@@ -477,7 +477,7 @@ pub fn prim_single_node_test() {
     model.new(Undirected)
     |> model.add_node(1, "A")
 
-  let result = mst.prim_int(graph)
+  let assert Ok(result) = mst.prim_int(graph)
 
   result.edge_count
   |> should.equal(0)
@@ -486,7 +486,7 @@ pub fn prim_single_node_test() {
 pub fn prim_empty_graph_test() {
   let graph = model.new(Undirected)
 
-  let result = mst.prim_int(graph)
+  let assert Ok(result) = mst.prim_int(graph)
 
   result.edge_count
   |> should.equal(0)
@@ -508,7 +508,7 @@ pub fn prim_square_with_diagonal_test() {
       #(2, 3, 5),
     ])
 
-  let result = mst.prim_int(graph)
+  let assert Ok(result) = mst.prim_int(graph)
 
   result.edge_count
   |> should.equal(3)
@@ -532,7 +532,7 @@ pub fn prim_classic_test() {
       #(2, 4, 5),
     ])
 
-  let result = mst.prim_int(graph)
+  let assert Ok(result) = mst.prim_int(graph)
 
   result.edge_count
   |> should.equal(3)
@@ -557,7 +557,7 @@ pub fn prim_pentagon_test() {
       #(5, 1, 5),
     ])
 
-  let result = mst.prim_int(graph)
+  let assert Ok(result) = mst.prim_int(graph)
 
   result.edge_count
   |> should.equal(4)
@@ -582,7 +582,7 @@ pub fn prim_complete_graph_k4_test() {
       #(3, 4, 6),
     ])
 
-  let result = mst.prim_int(graph)
+  let assert Ok(result) = mst.prim_int(graph)
 
   result.edge_count
   |> should.equal(3)
@@ -612,7 +612,7 @@ pub fn prim_complete_graph_k5_test() {
       #(4, 5, 10),
     ])
 
-  let result = mst.prim_int(graph)
+  let assert Ok(result) = mst.prim_int(graph)
 
   result.edge_count
   |> should.equal(4)
@@ -648,7 +648,7 @@ pub fn prim_larger_graph_test() {
       #(5, 10, 50),
     ])
 
-  let result = mst.prim_int(graph)
+  let assert Ok(result) = mst.prim_int(graph)
 
   result.edge_count
   |> should.equal(9)
@@ -672,8 +672,8 @@ pub fn prim_vs_kruskal_same_weight_test() {
       #(2, 4, 5),
     ])
 
-  let kruskal_result = mst.kruskal_int(graph)
-  let prim_result = mst.prim_int(graph)
+  let assert Ok(kruskal_result) = mst.kruskal_int(graph)
+  let assert Ok(prim_result) = mst.prim_int(graph)
 
   kruskal_result.edge_count
   |> should.equal(prim_result.edge_count)
@@ -692,7 +692,7 @@ pub fn boruvka_simple_triangle_test() {
     |> model.add_node(3, "C")
     |> model.add_edges([#(1, 2, 1), #(2, 3, 2), #(1, 3, 3)])
 
-  let result = mst.boruvka_int(graph)
+  let assert Ok(result) = mst.boruvka_int(graph)
 
   result.edge_count
   |> should.equal(2)
@@ -720,7 +720,7 @@ pub fn boruvka_square_with_diagonal_test() {
       #(2, 3, 5),
     ])
 
-  let result = mst.boruvka_int(graph)
+  let assert Ok(result) = mst.boruvka_int(graph)
 
   result.edge_count
   |> should.equal(3)
@@ -738,7 +738,7 @@ pub fn boruvka_disconnected_test() {
     |> model.add_node(4, "D")
     |> model.add_edges([#(1, 2, 1), #(3, 4, 2)])
 
-  let result = mst.boruvka_int(graph)
+  let assert Ok(result) = mst.boruvka_int(graph)
 
   result.edge_count
   |> should.equal(2)
@@ -768,8 +768,8 @@ pub fn boruvka_vs_kruskal_test() {
       #(4, 5, 10),
     ])
 
-  let boruvka_result = mst.boruvka_int(graph)
-  let kruskal_result = mst.kruskal_int(graph)
+  let assert Ok(boruvka_result) = mst.boruvka_int(graph)
+  let assert Ok(kruskal_result) = mst.kruskal_int(graph)
 
   boruvka_result.edge_count
   |> should.equal(kruskal_result.edge_count)
@@ -912,7 +912,7 @@ pub fn wilson_basic_tree_test() {
       #(1, 3, 4),
     ])
 
-  let result = mst.wilson_int_with_seed(graph, seed: 42)
+  let assert Ok(result) = mst.wilson_int_with_seed(graph, seed: 42)
 
   result.algorithm
   |> should.equal(mst.Wilson)
@@ -939,8 +939,8 @@ pub fn wilson_reproducible_with_seed_test() {
       #(2, 4, 5),
     ])
 
-  let result1 = mst.wilson_int_with_seed(graph, seed: 123)
-  let result2 = mst.wilson_int_with_seed(graph, seed: 123)
+  let assert Ok(result1) = mst.wilson_int_with_seed(graph, seed: 123)
+  let assert Ok(result2) = mst.wilson_int_with_seed(graph, seed: 123)
 
   result1.total_weight
   |> should.equal(result2.total_weight)
@@ -951,7 +951,7 @@ pub fn wilson_reproducible_with_seed_test() {
 
 pub fn wilson_empty_graph_test() {
   let graph = model.new(Undirected)
-  let result = mst.wilson_int(graph)
+  let assert Ok(result) = mst.wilson_int(graph)
 
   result.edge_count
   |> should.equal(0)
@@ -965,7 +965,7 @@ pub fn wilson_single_node_test() {
     model.new(Undirected)
     |> model.add_node(1, "A")
 
-  let result = mst.wilson_int(graph)
+  let assert Ok(result) = mst.wilson_int(graph)
 
   result.edge_count
   |> should.equal(0)
@@ -990,7 +990,7 @@ pub fn wilson_is_tree_test() {
       #(3, 4, 6),
     ])
 
-  let result = mst.wilson_int_with_seed(graph, seed: 999)
+  let assert Ok(result) = mst.wilson_int_with_seed(graph, seed: 999)
 
   // Build undirected graph from result edges
   let tree_graph =
@@ -1021,7 +1021,7 @@ pub fn kruskal_float_test() {
     |> model.add_node(3, "C")
     |> model.add_edges([#(1, 2, 1.5), #(2, 3, 2.5), #(1, 3, 3.5)])
 
-  let result = mst.kruskal_float(graph)
+  let assert Ok(result) = mst.kruskal_float(graph)
 
   result.edge_count
   |> should.equal(2)
@@ -1038,7 +1038,7 @@ pub fn prim_float_test() {
     |> model.add_node(3, "C")
     |> model.add_edges([#(1, 2, 1.5), #(2, 3, 2.5), #(1, 3, 3.5)])
 
-  let result = mst.prim_float(graph)
+  let assert Ok(result) = mst.prim_float(graph)
 
   result.edge_count
   |> should.equal(2)
@@ -1055,7 +1055,7 @@ pub fn boruvka_float_test() {
     |> model.add_node(3, "C")
     |> model.add_edges([#(1, 2, 1.5), #(2, 3, 2.5), #(1, 3, 3.5)])
 
-  let result = mst.boruvka_float(graph)
+  let assert Ok(result) = mst.boruvka_float(graph)
 
   result.edge_count
   |> should.equal(2)
@@ -1089,7 +1089,7 @@ pub fn wilson_float_test() {
     |> model.add_node(3, "C")
     |> model.add_edges([#(1, 2, 1.5), #(2, 3, 2.5), #(1, 3, 3.5)])
 
-  let result = mst.wilson_float_with_seed(graph, seed: 42)
+  let assert Ok(result) = mst.wilson_float_with_seed(graph, seed: 42)
 
   result.edge_count
   |> should.equal(2)
@@ -1108,7 +1108,7 @@ pub fn kruskal_generic_test() {
     |> model.add_node(3, "C")
     |> model.add_edges([#(1, 2, 1), #(2, 3, 2), #(1, 3, 3)])
 
-  let result =
+  let assert Ok(result) =
     mst.kruskal(
       graph,
       with_compare: int.compare,
@@ -1131,7 +1131,7 @@ pub fn prim_generic_test() {
     |> model.add_node(3, "C")
     |> model.add_edges([#(1, 2, 1), #(2, 3, 2), #(1, 3, 3)])
 
-  let result =
+  let assert Ok(result) =
     mst.prim(graph, with_compare: int.compare, with_add: int.add, with_zero: 0)
 
   result.edge_count
@@ -1149,7 +1149,7 @@ pub fn boruvka_generic_test() {
     |> model.add_node(3, "C")
     |> model.add_edges([#(1, 2, 1), #(2, 3, 2), #(1, 3, 3)])
 
-  let result =
+  let assert Ok(result) =
     mst.boruvka(
       graph,
       with_compare: int.compare,
@@ -1197,7 +1197,7 @@ pub fn wilson_generic_test() {
     |> model.add_node(3, "C")
     |> model.add_edges([#(1, 2, 1), #(2, 3, 2), #(1, 3, 3)])
 
-  let result =
+  let assert Ok(result) =
     mst.wilson_with_seed(graph, seed: 7, with_add: int.add, with_zero: 0)
 
   result.edge_count

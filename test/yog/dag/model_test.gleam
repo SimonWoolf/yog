@@ -1,3 +1,5 @@
+import gleam/int
+import gleam/list
 import gleeunit/should
 import yog/dag/model as dag_model
 import yog/model.{Directed}
@@ -35,12 +37,12 @@ pub fn dag_mutation_test() {
   // Test add_node
   let d2 = dag_model.add_node(d, 3, "C")
   let g2 = dag_model.to_graph(d2)
-  model.all_nodes(g2) |> should.equal([1, 2, 3])
+  model.all_nodes(g2) |> list.sort(int.compare) |> should.equal([1, 2, 3])
 
   // Test remove_node
   let d3 = dag_model.remove_node(d2, 2)
   let g3 = dag_model.to_graph(d3)
-  model.all_nodes(g3) |> should.equal([1, 3])
+  model.all_nodes(g3) |> list.sort(int.compare) |> should.equal([1, 3])
   // Ensure the edge 1->2 was also removed
   model.successors(g3, 1) |> should.equal([])
 

@@ -73,7 +73,7 @@ pub fn detect_with_weights(
   options: FluidOptions,
   weight_fn: fn(e) -> Float,
 ) -> Communities {
-  let all_nodes = dict.keys(graph.nodes)
+  let all_nodes = dict.keys(graph.nodes) |> list.sort(int.compare)
   let k = int.min(options.target_communities, list.length(all_nodes))
 
   case k {

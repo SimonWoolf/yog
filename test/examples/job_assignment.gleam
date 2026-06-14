@@ -35,7 +35,7 @@ pub fn main() {
   // Check if it's bipartite first
   case bipartite.partition(graph) {
     Some(partition) -> {
-      let matching = bipartite.maximum_matching(graph, partition)
+      let assert Ok(matching) = bipartite.maximum_matching(graph, partition)
       io.println(
         "Maximum assignments found: " <> int.to_string(list.length(matching)),
       )

@@ -59,19 +59,25 @@ pub type MinCut {
 /// Stoer-Wagner algorithm.
 ///
 /// Returns the minimum cut weight and the sizes of the two partitions.
+/// Returns an error if the input graph is directed.
 ///
 /// **Time Complexity:** O(V³)
 ///
 /// ## Example
 ///
 /// ```gleam
-/// let result = min_cut.global_min_cut(in: graph)
+/// let assert Ok(result) = min_cut.global_min_cut(in: graph)
 /// ```
-pub fn global_min_cut(in graph: Graph(n, Int)) -> MinCut {
-  // Start every node with a weight of 1 (representing itself)
-  // This tracks how many original nodes have been merged together
-  let graph = transform.map_nodes(graph, fn(_, _) { 1 })
-  do_min_cut(graph, None)
+pub fn global_min_cut(in graph: Graph(n, Int)) -> Result(MinCut, String) {
+  case graph.kind {
+    model.Directed -> Error("global_min_cut/1 requires an undirected graph")
+    model.Undirected -> {
+      // Start every node with a weight of 1 (representing itself)
+      // This tracks how many original nodes have been merged together
+      let graph = transform.map_nodes(graph, fn(_, _) { 1 })
+      Ok(do_min_cut(graph, None))
+    }
+  }
 }
 
 fn do_min_cut(graph: Graph(Int, Int), best: Option(MinCut)) -> MinCut {

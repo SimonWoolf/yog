@@ -239,7 +239,10 @@ fn combinations(items: List(a), k: Int) -> List(List(a)) {
   }
 }
 
-fn find_clique_components(adj: Dict(Int, List(Int)), n: Int) -> List(List(Int)) {
+fn find_clique_components(
+  adj: Dict(Int, List(Int)),
+  n: Int,
+) -> List(List(Int)) {
   // DFS to find connected components
   let visited = set.new()
   let #(_, components) =

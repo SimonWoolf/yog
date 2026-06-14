@@ -747,7 +747,11 @@ fn build_random_tree_seeded(
 /// - Testing algorithms that need uniform degree distribution
 /// - Expander graph approximations
 /// - Network models where degree is constrained
-pub fn random_regular(n: Int, d: Int, seed seed: Option(Int)) -> Graph(Nil, Int) {
+pub fn random_regular(
+  n: Int,
+  d: Int,
+  seed seed: Option(Int),
+) -> Graph(Nil, Int) {
   random_regular_with_type(n, d, model.Undirected, seed)
 }
 
@@ -1682,7 +1686,10 @@ fn create_nodes(graph: Graph(Nil, e), n: Int) -> Graph(Nil, e) {
 }
 
 // Helper: Build a list where each node appears proportional to its degree
-fn build_degree_list(graph: Graph(Nil, Int), graph_type: GraphType) -> List(Int) {
+fn build_degree_list(
+  graph: Graph(Nil, Int),
+  graph_type: GraphType,
+) -> List(Int) {
   model.all_nodes(graph)
   |> list.flat_map(fn(node) {
     let degree = case graph_type {

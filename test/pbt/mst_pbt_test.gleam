@@ -22,8 +22,8 @@ pub fn mst_kruskal_equals_prim_weight_test() {
     _ -> {
       case list.length(connectivity.strongly_connected_components(graph)) {
         1 -> {
-          let kruskal_result = mst.kruskal_int(graph)
-          let prim_result = mst.prim_int(graph)
+          let assert Ok(kruskal_result) = mst.kruskal_int(graph)
+          let assert Ok(prim_result) = mst.prim_int(graph)
 
           assert kruskal_result.total_weight == prim_result.total_weight
         }
@@ -43,7 +43,7 @@ pub fn mst_is_spanning_forest_test() {
   case model.order(graph) {
     0 -> Nil
     _ -> {
-      let mst_result = mst.kruskal_int(graph)
+      let assert Ok(mst_result) = mst.kruskal_int(graph)
       let num_components =
         list.length(connectivity.strongly_connected_components(graph))
       let n = model.order(graph)

@@ -118,7 +118,9 @@ fn bench_yog_path(input: #(Graph(Nil, Int), DigraphHandle, Int, Int)) -> Nil {
   Nil
 }
 
-fn bench_digraph_path(input: #(Graph(Nil, Int), DigraphHandle, Int, Int)) -> Nil {
+fn bench_digraph_path(
+  input: #(Graph(Nil, Int), DigraphHandle, Int, Int),
+) -> Nil {
   let #(_yog_graph, dg, from, to) = input
   let _ = digraph_get_short_path(dg, from, to)
   Nil

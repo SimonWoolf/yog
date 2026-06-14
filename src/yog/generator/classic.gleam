@@ -1029,7 +1029,10 @@ pub fn mobius_ladder(n: Int) -> Graph(Nil, Int) {
 }
 
 /// Generates a Möbius ladder graph with specified graph type.
-pub fn mobius_ladder_with_type(n: Int, graph_type: GraphType) -> Graph(Nil, Int) {
+pub fn mobius_ladder_with_type(
+  n: Int,
+  graph_type: GraphType,
+) -> Graph(Nil, Int) {
   case n < 2 {
     True -> model.new(graph_type)
     False -> {
@@ -1344,7 +1347,11 @@ pub fn turan(n: Int, r: Int) -> Graph(Nil, Int) {
 }
 
 /// Generates a Turán graph with specified graph type.
-pub fn turan_with_type(n: Int, r: Int, graph_type: GraphType) -> Graph(Nil, Int) {
+pub fn turan_with_type(
+  n: Int,
+  r: Int,
+  graph_type: GraphType,
+) -> Graph(Nil, Int) {
   case n <= 0 || r <= 0 {
     True -> model.new(graph_type)
     False -> {

@@ -498,7 +498,11 @@ fn add_toroidal_hints(ascii: String, _rows: Int, cols: Int) -> String {
   )
 }
 
-fn add_toroidal_hints_unicode(unicode: String, _rows: Int, cols: Int) -> String {
+fn add_toroidal_hints_unicode(
+  unicode: String,
+  _rows: Int,
+  cols: Int,
+) -> String {
   let lines = string.split(unicode, "\n")
 
   // Top arrow line (v)

@@ -106,7 +106,9 @@ fn bench_yog_reachable(input: #(Graph(Nil, Int), DigraphHandle, Int)) -> Nil {
   Nil
 }
 
-fn bench_digraph_reachable(input: #(Graph(Nil, Int), DigraphHandle, Int)) -> Nil {
+fn bench_digraph_reachable(
+  input: #(Graph(Nil, Int), DigraphHandle, Int),
+) -> Nil {
   let #(_yog_graph, dg, start) = input
   let _ = digraph_reachable([start], dg)
   Nil

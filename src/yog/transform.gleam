@@ -830,7 +830,10 @@ fn do_transitive_closure_dag(
   g
 }
 
-// Fallback for graphs with cycles - BFS/DFS from every node
+// Fallback for graphs with cycles - worklist-style fixed-point reachability.
+// Each reachable node is discovered with a weight; if it is reached again via
+// a different path the weights are merged with merge_fn. To guarantee
+// termination on cyclic graphs, a node is reprocessed at most V times.
 fn do_transitive_closure_general(
   graph: Graph(n, e),
   merge_fn: fn(e, e) -> e,
@@ -858,29 +861,93 @@ fn find_all_reachable_weighted(
 ) -> dict.Dict(NodeId, e) {
   let neighbors = model.successors(graph, start)
   let initial_queue = list.map(neighbors, fn(nb) { #(nb.0, nb.1) })
-  do_weighted_reachability(graph, initial_queue, dict.new(), merge_fn)
+  let max_updates = model.node_count(graph)
+  do_weighted_reachability(
+    graph,
+    initial_queue,
+    dict.new(),
+    dict.new(),
+    merge_fn,
+    max_updates,
+  )
 }
 
 fn do_weighted_reachability(
   graph: Graph(n, e),
   queue: List(#(NodeId, e)),
   visited: dict.Dict(NodeId, e),
+  updates: dict.Dict(NodeId, Int),
   merge_fn: fn(e, e) -> e,
+  max_updates: Int,
 ) -> dict.Dict(NodeId, e) {
   case queue {
     [] -> visited
     [#(current, weight_to_current), ..rest] -> {
       case dict.get(visited, current) {
-        Ok(_) -> do_weighted_reachability(graph, rest, visited, merge_fn)
+        Ok(prev_weight) -> {
+          let merged = merge_fn(prev_weight, weight_to_current)
+          case merged == prev_weight {
+            True ->
+              do_weighted_reachability(
+                graph,
+                rest,
+                visited,
+                updates,
+                merge_fn,
+                max_updates,
+              )
+            False -> {
+              let update_count = dict.get(updates, current) |> result.unwrap(0)
+              case update_count >= max_updates {
+                True ->
+                  do_weighted_reachability(
+                    graph,
+                    rest,
+                    visited,
+                    updates,
+                    merge_fn,
+                    max_updates,
+                  )
+                False -> {
+                  let new_visited = dict.insert(visited, current, merged)
+                  let new_updates =
+                    dict.insert(updates, current, update_count + 1)
+                  let neighbors = model.successors(graph, current)
+                  let next_steps =
+                    list.map(neighbors, fn(nb) {
+                      #(nb.0, merge_fn(merged, nb.1))
+                    })
+                  let next_queue = list.append(rest, next_steps)
+                  do_weighted_reachability(
+                    graph,
+                    next_queue,
+                    new_visited,
+                    new_updates,
+                    merge_fn,
+                    max_updates,
+                  )
+                }
+              }
+            }
+          }
+        }
         Error(_) -> {
           let new_visited = dict.insert(visited, current, weight_to_current)
+          let new_updates = dict.insert(updates, current, 1)
           let neighbors = model.successors(graph, current)
           let next_steps =
             list.map(neighbors, fn(nb) {
               #(nb.0, merge_fn(weight_to_current, nb.1))
             })
           let next_queue = list.append(rest, next_steps)
-          do_weighted_reachability(graph, next_queue, new_visited, merge_fn)
+          do_weighted_reachability(
+            graph,
+            next_queue,
+            new_visited,
+            new_updates,
+            merge_fn,
+            max_updates,
+          )
         }
       }
     }

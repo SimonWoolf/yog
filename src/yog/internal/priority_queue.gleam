@@ -43,13 +43,9 @@ pub fn is_empty(queue: Queue(a)) -> Bool {
   }
 }
 
-// TODO implement count in pairing heap for better run time
 /// Returns the number of elements in the priority queue.
 pub fn count(queue: Queue(a)) -> Int {
-  case heap.delete_min(queue) {
-    Ok(#(_, q)) -> count(q) + 1
-    Error(_) -> 0
-  }
+  heap.count(queue)
 }
 
 /// Rebuilds the priority queue with a new comparison function.

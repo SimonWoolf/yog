@@ -1268,7 +1268,11 @@ fn remove_passage(
 /// - **Space**: O(N) for weights and frontier
 /// - **Bias**: None
 /// - **Texture**: Jigsaw texture, balanced but dense
-pub fn prim_true(rows: Int, cols: Int, seed seed: Option(Int)) -> Grid(Nil, Int) {
+pub fn prim_true(
+  rows: Int,
+  cols: Int,
+  seed seed: Option(Int),
+) -> Grid(Nil, Int) {
   let rng = random.new(seed)
   let base_grid = create_empty_grid(rows, cols)
 

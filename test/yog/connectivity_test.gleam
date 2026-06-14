@@ -826,7 +826,7 @@ pub fn tarjan_vs_kosaraju_test() {
 pub fn connectivity_empty_graph_test() {
   let graph = model.new(Undirected)
 
-  let result = connectivity.analyze(in: graph)
+  let assert Ok(result) = connectivity.analyze(in: graph)
 
   result.bridges
   |> should.equal([])
@@ -840,7 +840,7 @@ pub fn connectivity_single_node_test() {
     model.new(Undirected)
     |> model.add_node(1, "A")
 
-  let result = connectivity.analyze(in: graph)
+  let assert Ok(result) = connectivity.analyze(in: graph)
 
   result.bridges
   |> should.equal([])
@@ -856,7 +856,7 @@ pub fn connectivity_two_nodes_test() {
     |> model.add_node(2, "B")
     |> model.add_edge(from: 1, to: 2, with: 1)
 
-  let result = connectivity.analyze(in: graph)
+  let assert Ok(result) = connectivity.analyze(in: graph)
 
   // Single edge is a bridge
   result.bridges
@@ -883,7 +883,7 @@ pub fn connectivity_linear_chain_test() {
     |> model.add_node(4, "D")
     |> model.add_edges([#(1, 2, 1), #(2, 3, 1), #(3, 4, 1)])
 
-  let result = connectivity.analyze(in: graph)
+  let assert Ok(result) = connectivity.analyze(in: graph)
 
   // All edges are bridges in a linear chain
   result.bridges
@@ -924,7 +924,7 @@ pub fn connectivity_triangle_no_bridges_test() {
     |> model.add_node(3, "C")
     |> model.add_edges([#(1, 2, 1), #(2, 3, 1), #(3, 1, 1)])
 
-  let result = connectivity.analyze(in: graph)
+  let assert Ok(result) = connectivity.analyze(in: graph)
 
   // No bridges in a cycle (triangle)
   result.bridges
@@ -958,7 +958,7 @@ pub fn connectivity_bridge_between_triangles_test() {
       #(3, 6, 1),
     ])
 
-  let result = connectivity.analyze(in: graph)
+  let assert Ok(result) = connectivity.analyze(in: graph)
 
   // Only the connecting edge is a bridge
   result.bridges
@@ -1001,7 +1001,7 @@ pub fn connectivity_star_graph_test() {
     |> model.add_node(5, "D")
     |> model.add_edges([#(1, 2, 1), #(1, 3, 1), #(1, 4, 1), #(1, 5, 1)])
 
-  let result = connectivity.analyze(in: graph)
+  let assert Ok(result) = connectivity.analyze(in: graph)
 
   // All edges are bridges in a star
   result.bridges
@@ -1033,7 +1033,7 @@ pub fn connectivity_diamond_test() {
     |> model.add_node(4, "Bottom")
     |> model.add_edges([#(1, 2, 1), #(1, 3, 1), #(2, 4, 1), #(3, 4, 1)])
 
-  let result = connectivity.analyze(in: graph)
+  let assert Ok(result) = connectivity.analyze(in: graph)
 
   // No bridges (multiple paths between all pairs)
   result.bridges
@@ -1075,7 +1075,7 @@ pub fn connectivity_complex_graph_test() {
       #(7, 8, 1),
     ])
 
-  let result = connectivity.analyze(in: graph)
+  let assert Ok(result) = connectivity.analyze(in: graph)
 
   // Bridges: 1-2, 5-6, 5-7, 7-8
   result.bridges
@@ -1131,7 +1131,7 @@ pub fn connectivity_disconnected_components_test() {
     |> model.add_node(5, "E")
     |> model.add_edges([#(1, 2, 1), #(3, 4, 1), #(4, 5, 1)])
 
-  let result = connectivity.analyze(in: graph)
+  let assert Ok(result) = connectivity.analyze(in: graph)
 
   // All edges are bridges (within their components)
   result.bridges
@@ -1156,7 +1156,7 @@ pub fn connectivity_isolated_nodes_test() {
     |> model.add_node(3, "C")
     |> model.add_edge(from: 1, to: 2, with: 1)
 
-  let result = connectivity.analyze(in: graph)
+  let assert Ok(result) = connectivity.analyze(in: graph)
 
   // Only the edge between connected nodes is a bridge
   result.bridges
@@ -1177,7 +1177,7 @@ pub fn connectivity_self_loop_test() {
     |> model.add_node(2, "B")
     |> model.add_edges([#(1, 1, 1), #(1, 2, 1)])
 
-  let result = connectivity.analyze(in: graph)
+  let assert Ok(result) = connectivity.analyze(in: graph)
 
   // Self-loop doesn't affect bridge detection
   result.bridges
@@ -1204,7 +1204,7 @@ pub fn connectivity_parallel_edges_test() {
     |> model.add_node(3, "C")
     |> model.add_edges([#(1, 2, 1), #(1, 2, 2), #(2, 3, 1)])
 
-  let result = connectivity.analyze(in: graph)
+  let assert Ok(result) = connectivity.analyze(in: graph)
 
   // With node-based parent tracking, parallel edges are detected
   // Both edges 1-2 and 2-3 are detected as bridges
@@ -1247,7 +1247,7 @@ pub fn connectivity_complete_graph_test() {
       #(3, 4, 1),
     ])
 
-  let result = connectivity.analyze(in: graph)
+  let assert Ok(result) = connectivity.analyze(in: graph)
 
   // No bridges in a complete graph
   result.bridges
@@ -1277,7 +1277,7 @@ pub fn connectivity_square_with_diagonal_test() {
       #(1, 4, 1),
     ])
 
-  let result = connectivity.analyze(in: graph)
+  let assert Ok(result) = connectivity.analyze(in: graph)
 
   // No bridges (multiple paths between all pairs)
   result.bridges
@@ -1297,7 +1297,7 @@ pub fn connectivity_bridge_ordering_test() {
     |> model.add_node(3, "B")
     |> model.add_edge(from: 5, to: 3, with: 1)
 
-  let result = connectivity.analyze(in: graph)
+  let assert Ok(result) = connectivity.analyze(in: graph)
 
   // Bridges should be stored in canonical order (lower ID first)
   result.bridges
@@ -1870,16 +1870,17 @@ pub fn k_core_square_test() {
     |> model.add_edge_ensure(3, 4, with: 1, default: Nil)
     |> model.add_edge_ensure(4, 1, with: 1, default: Nil)
 
-  let core_2 = connectivity.k_core(graph, 2)
+  let assert Ok(core_2) = connectivity.k_core(graph, 2)
   model.node_count(core_2) |> should.equal(4)
 
-  let core_3 = connectivity.k_core(graph, 3)
+  let assert Ok(core_3) = connectivity.k_core(graph, 3)
   model.node_count(core_3) |> should.equal(0)
 }
 
 pub fn k_core_empty_graph_test() {
   let graph = model.new(Undirected)
-  connectivity.k_core(graph, 1) |> model.node_count |> should.equal(0)
+  let assert Ok(core) = connectivity.k_core(graph, 1)
+  model.node_count(core) |> should.equal(0)
 }
 
 pub fn k_core_two_nodes_test() {
@@ -1889,13 +1890,11 @@ pub fn k_core_two_nodes_test() {
     |> model.add_node(2, Nil)
     |> model.add_edge_ensure(1, 2, with: 1, default: Nil)
 
-  connectivity.k_core(graph, 1)
-  |> model.node_count
-  |> should.equal(2)
+  let assert Ok(core_1) = connectivity.k_core(graph, 1)
+  core_1 |> model.node_count |> should.equal(2)
 
-  connectivity.k_core(graph, 2)
-  |> model.node_count
-  |> should.equal(0)
+  let assert Ok(core_2) = connectivity.k_core(graph, 2)
+  core_2 |> model.node_count |> should.equal(0)
 }
 
 pub fn core_numbers_two_nodes_test() {
@@ -1905,7 +1904,7 @@ pub fn core_numbers_two_nodes_test() {
     |> model.add_node(2, Nil)
     |> model.add_edge_ensure(1, 2, with: 1, default: Nil)
 
-  let cores = connectivity.core_numbers(graph)
+  let assert Ok(cores) = connectivity.core_numbers(graph)
   dict.get(cores, 1) |> should.be_ok |> should.equal(1)
   dict.get(cores, 2) |> should.be_ok |> should.equal(1)
 }
@@ -1920,7 +1919,7 @@ pub fn core_numbers_triangle_test() {
     |> model.add_edge_ensure(2, 3, with: 1, default: Nil)
     |> model.add_edge_ensure(3, 1, with: 1, default: Nil)
 
-  let cores = connectivity.core_numbers(graph)
+  let assert Ok(cores) = connectivity.core_numbers(graph)
   dict.get(cores, 1) |> should.be_ok |> should.equal(2)
   dict.get(cores, 2) |> should.be_ok |> should.equal(2)
   dict.get(cores, 3) |> should.be_ok |> should.equal(2)
@@ -1938,11 +1937,13 @@ pub fn degeneracy_square_test() {
     |> model.add_edge_ensure(3, 4, with: 1, default: Nil)
     |> model.add_edge_ensure(4, 1, with: 1, default: Nil)
 
-  connectivity.degeneracy(graph) |> should.equal(2)
+  let assert Ok(deg) = connectivity.degeneracy(graph)
+  deg |> should.equal(2)
 }
 
 pub fn degeneracy_empty_test() {
-  model.new(Undirected) |> connectivity.degeneracy |> should.equal(0)
+  let assert Ok(deg) = connectivity.degeneracy(model.new(Undirected))
+  deg |> should.equal(0)
 }
 
 pub fn shell_decomposition_test() {
@@ -1957,6 +1958,6 @@ pub fn shell_decomposition_test() {
     |> model.add_edge_ensure(3, 4, with: 1, default: Nil)
     |> model.add_edge_ensure(4, 1, with: 1, default: Nil)
 
-  let shells = connectivity.shell_decomposition(graph)
+  let assert Ok(shells) = connectivity.shell_decomposition(graph)
   dict.get(shells, 2) |> should.be_ok |> list.length |> should.equal(4)
 }

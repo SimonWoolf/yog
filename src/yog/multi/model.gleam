@@ -220,7 +220,10 @@ pub fn add_edge(
 
 /// Removes a single edge by its `EdgeId`.
 /// For undirected graphs both direction-index entries are removed.
-pub fn remove_edge(graph: MultiGraph(n, e), edge_id: EdgeId) -> MultiGraph(n, e) {
+pub fn remove_edge(
+  graph: MultiGraph(n, e),
+  edge_id: EdgeId,
+) -> MultiGraph(n, e) {
   do_remove_edge(graph, edge_id)
 }
 
@@ -362,9 +365,10 @@ pub fn to_simple_graph(
 /// |> dijkstra.shortest_path(from: 1, to: 5, ...)
 ///
 /// // MST on multigraph  
-/// graph
-/// |> multi.to_simple_graph_min_edges(int.compare)
-/// |> mst.kruskal_int()
+/// let assert Ok(mst_result) =
+///   graph
+///   |> multi.to_simple_graph_min_edges(int.compare)
+///   |> mst.kruskal_int()
 /// ```
 pub fn to_simple_graph_min_edges(
   graph: MultiGraph(n, e),

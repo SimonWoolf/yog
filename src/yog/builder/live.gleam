@@ -525,7 +525,9 @@ pub fn pending_count(builder: LiveBuilder(n, e)) -> Int {
 /// let live_builder = live.add_edge(live_builder, "B", "C", 5)
 /// let #(live_builder, graph) = live.sync(live_builder, graph)
 /// ```
-pub fn from_labeled(labeled_builder: labeled.Builder(n, e)) -> LiveBuilder(n, e) {
+pub fn from_labeled(
+  labeled_builder: labeled.Builder(n, e),
+) -> LiveBuilder(n, e) {
   // Extract the registry from the labeled builder using its public API
   let registry = labeled.to_registry(labeled_builder)
   let next_id = labeled.next_id(labeled_builder)

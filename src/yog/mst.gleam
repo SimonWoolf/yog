@@ -93,18 +93,33 @@ pub type MstResult(e) {
 
 /// Finds the Minimum Spanning Tree (MST) using Kruskal's algorithm.
 ///
+/// Requires an undirected graph. Returns an error for directed graphs
+/// (use `edmonds/6` for directed minimum spanning arborescences).
+///
 /// **Time Complexity:** O(E log E)
 pub fn kruskal(
   in graph: Graph(n, e),
   with_compare compare: fn(e, e) -> Order,
   with_add add: fn(e, e) -> e,
   with_zero zero: e,
-) -> MstResult(e) {
-  let edges =
-    extract_undirected_edges(graph)
-    |> list.sort(fn(a, b) { compare(a.weight, b.weight) })
-  let mst_edges = do_kruskal(edges, disjoint_set.new(), [])
-  make_result(mst_edges, Kruskal, dict.size(graph.nodes), None, add, zero)
+) -> Result(MstResult(e), String) {
+  case graph.kind {
+    Directed -> Error("kruskal/4 requires an undirected graph")
+    Undirected -> {
+      let edges =
+        extract_undirected_edges(graph)
+        |> list.sort(fn(a, b) { compare(a.weight, b.weight) })
+      let mst_edges = do_kruskal(edges, disjoint_set.new(), [])
+      Ok(make_result(
+        mst_edges,
+        Kruskal,
+        dict.size(graph.nodes),
+        None,
+        add,
+        zero,
+      ))
+    }
+  }
 }
 
 fn do_kruskal(
@@ -139,6 +154,9 @@ fn do_kruskal(
 
 /// Finds the Minimum Spanning Tree (MST) using Prim's algorithm.
 ///
+/// Requires an undirected graph. Returns an error for directed graphs
+/// (use `edmonds/6` for directed minimum spanning arborescences).
+///
 /// **Time Complexity:** O(E log V)
 ///
 /// **Disconnected Graphs:** For disconnected graphs, Prim's only returns edges
@@ -148,21 +166,28 @@ pub fn prim(
   with_compare compare: fn(e, e) -> Order,
   with_add add: fn(e, e) -> e,
   with_zero zero: e,
-) -> MstResult(e) {
-  let mst_edges = case dict.keys(graph.nodes) {
-    [] -> []
-    [start, ..] -> {
-      let initial_pq =
-        priority_queue.new(fn(a: Edge(e), b: Edge(e)) {
-          compare(a.weight, b.weight)
-        })
-      graph
-      |> get_all_edges_from_node(start)
-      |> list.fold(initial_pq, fn(pq, edge) { priority_queue.push(pq, edge) })
-      |> do_prim(graph, _, set.from_list([start]), [])
+) -> Result(MstResult(e), String) {
+  case graph.kind {
+    Directed -> Error("prim/4 requires an undirected graph")
+    Undirected -> {
+      let mst_edges = case dict.keys(graph.nodes) {
+        [] -> []
+        [start, ..] -> {
+          let initial_pq =
+            priority_queue.new(fn(a: Edge(e), b: Edge(e)) {
+              compare(a.weight, b.weight)
+            })
+          graph
+          |> get_all_edges_from_node(start)
+          |> list.fold(initial_pq, fn(pq, edge) {
+            priority_queue.push(pq, edge)
+          })
+          |> do_prim(graph, _, set.from_list([start]), [])
+        }
+      }
+      Ok(make_result(mst_edges, Prim, dict.size(graph.nodes), None, add, zero))
     }
   }
-  make_result(mst_edges, Prim, dict.size(graph.nodes), None, add, zero)
 }
 
 fn do_prim(
@@ -195,21 +220,29 @@ fn do_prim(
 
 /// Finds the Minimum Spanning Tree (MST) using Borůvka's algorithm.
 ///
+/// Requires an undirected graph. Returns an error for directed graphs
+/// (use `edmonds/6` for directed minimum spanning arborescences).
+///
 /// **Time Complexity:** O(E log V)
 pub fn boruvka(
   in graph: Graph(n, e),
   with_compare compare: fn(e, e) -> Order,
   with_add add: fn(e, e) -> e,
   with_zero zero: e,
-) -> MstResult(e) {
-  let nodes = dict.keys(graph.nodes)
-  let dsu =
-    list.fold(nodes, disjoint_set.new(), fn(acc, node) {
-      disjoint_set.add(acc, node)
-    })
-  let all_edges = extract_undirected_edges(graph)
-  let mst_edges = do_boruvka(all_edges, dsu, [], compare)
-  make_result(mst_edges, Boruvka, list.length(nodes), None, add, zero)
+) -> Result(MstResult(e), String) {
+  case graph.kind {
+    Directed -> Error("boruvka/4 requires an undirected graph")
+    Undirected -> {
+      let nodes = dict.keys(graph.nodes)
+      let dsu =
+        list.fold(nodes, disjoint_set.new(), fn(acc, node) {
+          disjoint_set.add(acc, node)
+        })
+      let all_edges = extract_undirected_edges(graph)
+      let mst_edges = do_boruvka(all_edges, dsu, [], compare)
+      Ok(make_result(mst_edges, Boruvka, list.length(nodes), None, add, zero))
+    }
+  }
 }
 
 fn do_boruvka(
@@ -568,12 +601,13 @@ fn expand_cycle(
 
 /// Generates a Uniform Spanning Tree (UST) using Wilson's algorithm.
 ///
-/// Uses a random seed for non-deterministic sampling.
+/// Requires an undirected, connected graph. Returns an error for directed
+/// or disconnected graphs.
 pub fn wilson(
   in graph: Graph(n, e),
   with_add add: fn(e, e) -> e,
   with_zero zero: e,
-) -> MstResult(e) {
+) -> Result(MstResult(e), String) {
   do_wilson_generic(graph, random.new(None), add, zero)
 }
 
@@ -583,7 +617,7 @@ pub fn wilson_with_seed(
   seed seed: Int,
   with_add add: fn(e, e) -> e,
   with_zero zero: e,
-) -> MstResult(e) {
+) -> Result(MstResult(e), String) {
   do_wilson_generic(graph, random.new(Some(seed)), add, zero)
 }
 
@@ -592,15 +626,23 @@ fn do_wilson_generic(
   rng: random.Rng,
   add: fn(e, e) -> e,
   zero: e,
-) -> MstResult(e) {
-  let nodes = dict.keys(graph.nodes)
-  case nodes {
-    [] -> make_result([], Wilson, 0, None, add, zero)
-    [first, ..] -> {
-      let tree = set.from_list([first])
-      let unvisited = set.difference(set.from_list(nodes), tree)
-      let #(edges, _) = do_wilson_loop(graph, unvisited, tree, [], rng)
-      make_result(edges, Wilson, list.length(nodes), None, add, zero)
+) -> Result(MstResult(e), String) {
+  case graph.kind {
+    Directed -> Error("wilson/2 requires an undirected graph")
+    Undirected -> {
+      let nodes = dict.keys(graph.nodes)
+      case nodes {
+        [] -> Ok(make_result([], Wilson, 0, None, add, zero))
+        [first, ..] -> {
+          let tree = set.from_list([first])
+          let unvisited = set.difference(set.from_list(nodes), tree)
+          case do_wilson_loop(graph, unvisited, tree, [], rng) {
+            Error(msg) -> Error(msg)
+            Ok(#(edges, _)) ->
+              Ok(make_result(edges, Wilson, list.length(nodes), None, add, zero))
+          }
+        }
+      }
     }
   }
 }
@@ -611,26 +653,29 @@ fn do_wilson_loop(
   tree: Set(NodeId),
   acc_edges: List(Edge(e)),
   rng: random.Rng,
-) -> #(List(Edge(e)), random.Rng) {
+) -> Result(#(List(Edge(e)), random.Rng), String) {
   case set.size(unvisited) {
-    0 -> #(list.reverse(acc_edges), rng)
+    0 -> Ok(#(list.reverse(acc_edges), rng))
     _ -> {
       let unvisited_list = set.to_list(unvisited)
       let #(idx, next_rng) = random.next_int(rng, list.length(unvisited_list))
       let assert Ok(start_node) = util.list_at(unvisited_list, idx)
 
-      let #(path_map, next_rng2) =
-        perform_lerw(graph, start_node, tree, dict.new(), next_rng)
-      let #(new_tree, new_unvisited, path_edges) =
-        add_path_to_tree(graph, start_node, path_map, tree, unvisited)
+      case perform_lerw(graph, start_node, tree, dict.new(), next_rng) {
+        Error(msg) -> Error(msg)
+        Ok(#(path_map, next_rng2)) -> {
+          let #(new_tree, new_unvisited, path_edges) =
+            add_path_to_tree(graph, start_node, path_map, tree, unvisited)
 
-      do_wilson_loop(
-        graph,
-        new_unvisited,
-        new_tree,
-        list.append(acc_edges, path_edges),
-        next_rng2,
-      )
+          do_wilson_loop(
+            graph,
+            new_unvisited,
+            new_tree,
+            list.append(acc_edges, path_edges),
+            next_rng2,
+          )
+        }
+      }
     }
   }
 }
@@ -641,13 +686,13 @@ fn perform_lerw(
   tree: Set(NodeId),
   path_map: Dict(NodeId, NodeId),
   rng: random.Rng,
-) -> #(Dict(NodeId, NodeId), random.Rng) {
+) -> Result(#(Dict(NodeId, NodeId), random.Rng), String) {
   case set.contains(tree, current) {
-    True -> #(path_map, rng)
+    True -> Ok(#(path_map, rng))
     False -> {
       let neighbors = model.successor_ids(graph, current)
       case neighbors {
-        [] -> #(path_map, rng)
+        [] -> Error("wilson/2 requires a connected graph")
         _ -> {
           let #(idx, next_rng) = random.next_int(rng, list.length(neighbors))
           let assert Ok(next_node) = util.list_at(neighbors, idx)
@@ -693,12 +738,14 @@ fn add_path_to_tree(
 // =============================================================================
 
 /// Kruskal for `Int` weights.
-pub fn kruskal_int(in graph: Graph(n, Int)) -> MstResult(Int) {
+pub fn kruskal_int(in graph: Graph(n, Int)) -> Result(MstResult(Int), String) {
   kruskal(graph, with_compare: int.compare, with_add: int.add, with_zero: 0)
 }
 
 /// Kruskal for `Float` weights.
-pub fn kruskal_float(in graph: Graph(n, Float)) -> MstResult(Float) {
+pub fn kruskal_float(
+  in graph: Graph(n, Float),
+) -> Result(MstResult(Float), String) {
   kruskal(
     graph,
     with_compare: float.compare,
@@ -708,22 +755,26 @@ pub fn kruskal_float(in graph: Graph(n, Float)) -> MstResult(Float) {
 }
 
 /// Prim for `Int` weights.
-pub fn prim_int(in graph: Graph(n, Int)) -> MstResult(Int) {
+pub fn prim_int(in graph: Graph(n, Int)) -> Result(MstResult(Int), String) {
   prim(graph, with_compare: int.compare, with_add: int.add, with_zero: 0)
 }
 
 /// Prim for `Float` weights.
-pub fn prim_float(in graph: Graph(n, Float)) -> MstResult(Float) {
+pub fn prim_float(
+  in graph: Graph(n, Float),
+) -> Result(MstResult(Float), String) {
   prim(graph, with_compare: float.compare, with_add: float.add, with_zero: 0.0)
 }
 
 /// Borůvka for `Int` weights.
-pub fn boruvka_int(in graph: Graph(n, Int)) -> MstResult(Int) {
+pub fn boruvka_int(in graph: Graph(n, Int)) -> Result(MstResult(Int), String) {
   boruvka(graph, with_compare: int.compare, with_add: int.add, with_zero: 0)
 }
 
 /// Borůvka for `Float` weights.
-pub fn boruvka_float(in graph: Graph(n, Float)) -> MstResult(Float) {
+pub fn boruvka_float(
+  in graph: Graph(n, Float),
+) -> Result(MstResult(Float), String) {
   boruvka(
     graph,
     with_compare: float.compare,
@@ -763,12 +814,14 @@ pub fn edmonds_float(
 }
 
 /// Wilson for `Int` weights.
-pub fn wilson_int(in graph: Graph(n, Int)) -> MstResult(Int) {
+pub fn wilson_int(in graph: Graph(n, Int)) -> Result(MstResult(Int), String) {
   wilson(graph, with_add: int.add, with_zero: 0)
 }
 
 /// Wilson for `Float` weights.
-pub fn wilson_float(in graph: Graph(n, Float)) -> MstResult(Float) {
+pub fn wilson_float(
+  in graph: Graph(n, Float),
+) -> Result(MstResult(Float), String) {
   wilson(graph, with_add: float.add, with_zero: 0.0)
 }
 
@@ -776,7 +829,7 @@ pub fn wilson_float(in graph: Graph(n, Float)) -> MstResult(Float) {
 pub fn wilson_int_with_seed(
   in graph: Graph(n, Int),
   seed seed: Int,
-) -> MstResult(Int) {
+) -> Result(MstResult(Int), String) {
   wilson_with_seed(graph, seed: seed, with_add: int.add, with_zero: 0)
 }
 
@@ -784,7 +837,7 @@ pub fn wilson_int_with_seed(
 pub fn wilson_float_with_seed(
   in graph: Graph(n, Float),
   seed seed: Int,
-) -> MstResult(Float) {
+) -> Result(MstResult(Float), String) {
   wilson_with_seed(graph, seed: seed, with_add: float.add, with_zero: 0.0)
 }
 

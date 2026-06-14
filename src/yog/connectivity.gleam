@@ -97,30 +97,38 @@ pub type ConnectivityResults {
 /// ```
 ///
 /// **Time Complexity:** O(V + E)
-pub fn analyze(in graph: Graph(n, e)) -> ConnectivityResults {
-  let nodes = dict.keys(graph.nodes)
-  let initial_state =
-    InternalState(
-      tin: dict.new(),
-      low: dict.new(),
-      timer: 0,
-      bridges: [],
-      points: set.new(),
-      visited: set.new(),
-    )
+pub fn analyze(in graph: Graph(n, e)) -> Result(ConnectivityResults, String) {
+  case graph.kind {
+    model.Directed ->
+      Error(
+        "analyze/1 requires an undirected graph; use strongly_connected_components/1 for directed graphs",
+      )
+    model.Undirected -> {
+      let nodes = dict.keys(graph.nodes)
+      let initial_state =
+        InternalState(
+          tin: dict.new(),
+          low: dict.new(),
+          timer: 0,
+          bridges: [],
+          points: set.new(),
+          visited: set.new(),
+        )
 
-  let final_state =
-    list.fold(nodes, initial_state, fn(state, node) {
-      case set.contains(state.visited, node) {
-        True -> state
-        False -> do_analyze(graph, node, None, state)
-      }
-    })
+      let final_state =
+        list.fold(nodes, initial_state, fn(state, node) {
+          case set.contains(state.visited, node) {
+            True -> state
+            False -> do_analyze(graph, node, None, state)
+          }
+        })
 
-  ConnectivityResults(
-    bridges: final_state.bridges,
-    articulation_points: set.to_list(final_state.points),
-  )
+      Ok(ConnectivityResults(
+        bridges: final_state.bridges,
+        articulation_points: set.to_list(final_state.points),
+      ))
+    }
+  }
 }
 
 type InternalState {
@@ -644,30 +652,42 @@ fn wcc_dfs_collect(
 /// ```
 ///
 /// **Time Complexity:** O(V + E)
-pub fn k_core(graph: Graph(n, e), k: Int) -> Graph(n, e) {
-  let nodes = model.all_nodes(graph)
-  let degrees = initial_degrees(graph, nodes)
-  let to_prune =
-    list.filter(nodes, fn(u) {
-      case dict.get(degrees, u) {
-        Ok(deg) -> deg < k
-        Error(_) -> False
-      }
-    })
-  let queue_set = set.from_list(to_prune)
-  let pruned =
-    do_prune_k_core(graph.out_edges, to_prune, queue_set, degrees, k, set.new())
-  let remaining = set.difference(set.from_list(nodes), pruned) |> set.to_list
-  transform.subgraph(graph, remaining)
+pub fn k_core(graph: Graph(n, e), k: Int) -> Result(Graph(n, e), String) {
+  case graph.kind {
+    model.Directed -> Error("k_core/2 requires an undirected graph")
+    model.Undirected -> {
+      let nodes = model.all_nodes(graph)
+      let degrees = initial_degrees(graph, nodes)
+      let to_prune =
+        list.filter(nodes, fn(u) {
+          case dict.get(degrees, u) {
+            Ok(deg) -> deg < k
+            Error(_) -> False
+          }
+        })
+      let queue_set = set.from_list(to_prune)
+      let pruned =
+        do_prune_k_core(
+          graph.out_edges,
+          to_prune,
+          queue_set,
+          degrees,
+          k,
+          set.new(),
+        )
+      let remaining =
+        set.difference(set.from_list(nodes), pruned) |> set.to_list
+      Ok(transform.subgraph(graph, remaining))
+    }
+  }
 }
 
-fn initial_degrees(graph: Graph(n, e), nodes: List(NodeId)) -> Dict(NodeId, Int) {
+fn initial_degrees(
+  graph: Graph(n, e),
+  nodes: List(NodeId),
+) -> Dict(NodeId, Int) {
   use acc, u <- list.fold(nodes, dict.new())
-  let deg = case dict.get(graph.out_edges, u) {
-    Ok(neighbors) -> dict.size(neighbors)
-    Error(_) -> 0
-  }
-  dict.insert(acc, u, deg)
+  dict.insert(acc, u, model.degree(graph, u))
 }
 
 fn do_prune_k_core(
@@ -735,14 +755,19 @@ fn do_prune_k_core(
 /// ```
 ///
 /// **Time Complexity:** O(V + E)
-pub fn core_numbers(graph: Graph(n, e)) -> Dict(NodeId, Int) {
-  let nodes = model.all_nodes(graph)
-  let degrees = initial_degrees(graph, nodes)
-  let max_deg = case dict.values(degrees) {
-    [] -> 0
-    vals -> list.fold(vals, 0, int.max)
+pub fn core_numbers(graph: Graph(n, e)) -> Result(Dict(NodeId, Int), String) {
+  case graph.kind {
+    model.Directed -> Error("core_numbers/1 requires an undirected graph")
+    model.Undirected -> {
+      let nodes = model.all_nodes(graph)
+      let degrees = initial_degrees(graph, nodes)
+      let max_deg = case dict.values(degrees) {
+        [] -> 0
+        vals -> list.fold(vals, 0, int.max)
+      }
+      Ok(do_calculate_core_numbers(graph.out_edges, nodes, degrees, max_deg))
+    }
   }
-  do_calculate_core_numbers(graph.out_edges, nodes, degrees, max_deg)
 }
 
 fn do_calculate_core_numbers(
@@ -850,11 +875,14 @@ fn process_bucket(
 /// parameters such as chromatic number.
 ///
 /// **Time Complexity:** O(V + E)
-pub fn degeneracy(graph: Graph(n, e)) -> Int {
-  let cores = core_numbers(graph)
-  case dict.values(cores) {
-    [] -> 0
-    vals -> list.fold(vals, 0, int.max)
+pub fn degeneracy(graph: Graph(n, e)) -> Result(Int, String) {
+  case core_numbers(graph) {
+    Error(msg) -> Error(msg)
+    Ok(cores) ->
+      Ok(case dict.values(cores) {
+        [] -> 0
+        vals -> list.fold(vals, 0, int.max)
+      })
   }
 }
 
@@ -873,11 +901,20 @@ pub fn degeneracy(graph: Graph(n, e)) -> Int {
 /// ```
 ///
 /// **Time Complexity:** O(V + E)
-pub fn shell_decomposition(graph: Graph(n, e)) -> Dict(Int, List(NodeId)) {
-  use acc, node, core <- dict.fold(core_numbers(graph), dict.new())
-  let existing = case dict.get(acc, core) {
-    Ok(nodes) -> nodes
-    Error(_) -> []
+pub fn shell_decomposition(
+  graph: Graph(n, e),
+) -> Result(Dict(Int, List(NodeId)), String) {
+  case core_numbers(graph) {
+    Error(msg) -> Error(msg)
+    Ok(cores) ->
+      Ok(
+        dict.fold(cores, dict.new(), fn(acc, node, core) {
+          let existing = case dict.get(acc, core) {
+            Ok(nodes) -> nodes
+            Error(_) -> []
+          }
+          dict.insert(acc, core, [node, ..existing])
+        }),
+      )
   }
-  dict.insert(acc, core, [node, ..existing])
 }

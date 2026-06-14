@@ -345,7 +345,9 @@ fn do_remove_first(
 }
 
 // Build Dict(NodeId, List(NodeId)) from the graph's out_edges.
-fn build_adjacency_lists(graph: Graph(n, e)) -> dict.Dict(NodeId, List(NodeId)) {
+fn build_adjacency_lists(
+  graph: Graph(n, e),
+) -> dict.Dict(NodeId, List(NodeId)) {
   dict.fold(graph.out_edges, dict.new(), fn(acc, from, neighbors) {
     dict.insert(acc, from, dict.keys(neighbors))
   })

@@ -28,7 +28,7 @@ pub fn main() {
     ])
 
   // Find the global minimum cut using Stoer-Wagner
-  let result = flow.global_min_cut(graph)
+  let assert Ok(result) = flow.global_min_cut(graph)
 
   io.println("Min cut weight: " <> int.to_string(result.weight))
   io.println("Group A size: " <> int.to_string(result.group_a_size))

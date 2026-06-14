@@ -14,7 +14,7 @@ Comprehensive guide to graph algorithms available in Yog.
 | **Floyd-Warshall** | `yog/pathfinding/floyd_warshall` | All-pairs shortest paths, distance matrices | O(V³) |
 | **Johnson's** | `yog/pathfinding/johnson` | All-pairs shortest paths in sparse graphs with negative weights | O(V² log V + VE) |
 | **BFS/DFS** | `yog/traversal` | Unweighted graphs, exploring reachability | O(V+E) |
-| **Implicit Search** | `yog/pathfinding/implicit` | Pathfinding/Traversal on on-demand graphs | O((V+E) log V) |
+| **Implicit Search** | `yog/pathfinding/dijkstra`, `yog/pathfinding/a_star`, `yog/pathfinding/bellman_ford` | Pathfinding/Traversal on on-demand graphs | O((V+E) log V) |
 
 ## Unweighted Pathfinding
 
@@ -33,8 +33,8 @@ Specialized BFS-based algorithms for graphs with uniform edge weights (hop count
 | **Tarjan's SCC** | `yog/connectivity` | Finding strongly connected components | O(V+E) |
 | **Kosaraju's SCC** | `yog/connectivity` | Strongly connected components (two-pass) | O(V + E) |
 | **Tarjan's Connectivity** | `yog/connectivity` | Finding bridges and articulation points | O(V+E) |
-| **Stoer-Wagner** | `yog/connectivity` | Global minimum cut, graph partitioning | O(V³) |
-| **Bron-Kerbosch** | `yog/connectivity` | Maximum and all maximal cliques | O(3^(n/3)) |
+| **Stoer-Wagner** | `yog/flow/min_cut` | Global minimum cut, graph partitioning | O(V³) |
+| **Bron-Kerbosch** | `yog/property/clique` | Maximum and all maximal cliques | O(3^(n/3)) |
 | **Bipartite Detection** | `yog/property/bipartite` | Checking if graph is 2-colorable | O(V+E) |
 | **Cyclicity Detection** | `yog/property/cyclicity` | Finding cycles in directed/undirected graphs | O(V+E) |
 
@@ -51,8 +51,8 @@ Specialized BFS-based algorithms for graphs with uniform edge weights (hop count
 | Algorithm | Module | Use When | Time Complexity |
 | --------- | ------ | -------- | --------------- |
 | **Edmonds-Karp** | `yog/flow/max_flow` | Maximum flow, bipartite matching, network optimization | O(VE²) |
-| **Gale-Shapley** | `yog/flow/matching` | Stable matching, college admissions | O(n²) |
-| **Network Simplex** | `yog/flow/min_cost` | Global minimum cost flow optimization | O(E) pivots |
+| **Gale-Shapley** | `yog/property/bipartite` | Stable matching, college admissions | O(n²) |
+| **Network Simplex** | `yog/flow/network_simplex` | Global minimum cost flow optimization | O(V²E) worst-case |
 
 ## Network Analysis & Centrality
 

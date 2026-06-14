@@ -147,12 +147,14 @@ pub fn johnson(
   {
     Error(Nil) -> Error(Nil)
     Ok(h) -> {
-      // Step 3: For each vertex, run Dijkstra on the reweighted graph
+      // Step 3: Reweight the graph once (depends only on h), then run
+      // Dijkstra from every vertex on the reweighted graph.
+      let reweighted = reweight_graph(graph, h, zero, add, subtract)
       let all_pairs_distances =
         list.fold(nodes, dict.new(), fn(distances, u) {
           let distances_from_u =
             dijkstra.single_source_distances(
-              in: reweight_graph(graph, h, zero, add, subtract),
+              in: reweighted,
               from: u,
               with_zero: zero,
               with_add: add,

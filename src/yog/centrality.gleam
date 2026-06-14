@@ -276,7 +276,10 @@ fn merge_scores(
   })
 }
 
-fn scale_all(scores: Dict(NodeId, Float), factor: Float) -> Dict(NodeId, Float) {
+fn scale_all(
+  scores: Dict(NodeId, Float),
+  factor: Float,
+) -> Dict(NodeId, Float) {
   dict.map_values(scores, fn(_node, score) { score *. factor })
 }
 
@@ -616,7 +619,10 @@ fn iterate_eigenvector_with_oscillation_check(
   }
 }
 
-fn calculate_l2_norm(scores: Dict(NodeId, Float), nodes: List(NodeId)) -> Float {
+fn calculate_l2_norm(
+  scores: Dict(NodeId, Float),
+  nodes: List(NodeId),
+) -> Float {
   let sum_squares = {
     use sum, node <- list.fold(nodes, 0.0)
     let score = dict_get_float(scores, node)

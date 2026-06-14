@@ -5,6 +5,46 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Breaking Changes
+
+- **Graph-kind guards for undirected-only algorithms** — Several algorithms that
+  only make sense on undirected graphs now return `Result(..., String)` and
+  produce a clear error when passed a directed graph:
+  - `yog/connectivity.analyze/1`
+  - `yog/connectivity.k_core/2`
+  - `yog/connectivity.core_numbers/1`
+  - `yog/connectivity.degeneracy/1`
+  - `yog/connectivity.shell_decomposition/1`
+  - `yog/flow/min_cut.global_min_cut/1`
+  - `yog/mst.kruskal/4` (and `*_int`/`*_float` wrappers)
+  - `yog/mst.prim/4` (and wrappers)
+  - `yog/mst.boruvka/4` (and wrappers)
+  - `yog/mst.wilson/2`, `wilson_with_seed/3` (and wrappers)
+  - `yog/property/bipartite.maximum_matching/2`
+
+### Fixed
+
+- **JavaScript target**: Fixed 3 test failures caused by platform-specific
+  traversal ordering and dict iteration order.
+- **Johnson's algorithm**: Moved graph reweighting outside the per-source loop
+  for a significant performance improvement.
+- **Transitive closure**: General/cyclic graphs now merge weights from alternate
+  paths using the supplied `merge_fn` (with a per-node iteration cap to ensure
+  termination).
+- **Wilson's MST**: Now returns a clear error on disconnected graphs instead of
+  panicking.
+- **Priority queue `count`**: Is now O(1) by tracking heap size internally.
+
+### Changed
+
+- **CI**: Added JavaScript target and example-runner jobs.
+- **Documentation**: Corrected module paths and complexity claims in
+  `ALGORITHMS.md`; corrected Erlang array performance notes.
+- **Formatting**: Reformatted all source files and enabled strict format checks.
+- **Hygiene**: Removed stale `erl_crash.dump` from the working tree.
+
 ## 6.0.0 - 2026-04-11
 
 ### Breaking Changes

@@ -82,7 +82,7 @@ pub fn bridges_increase_components_test() {
       let assert Ok(graph) =
         model.add_edge(graph, from: src, to: dst, with: weight)
 
-      let result = connectivity.analyze(in: graph)
+      let assert Ok(result) = connectivity.analyze(in: graph)
 
       let base_comp =
         list.length(connectivity.strongly_connected_components(graph))

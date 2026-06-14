@@ -209,7 +209,10 @@ pub fn min_cut(
 }
 
 // Build flat residual capacities dict with forward and backward edges
-fn build_residuals(graph: Graph(n, e), zero: e) -> #(Residuals(e), Set(NodeId)) {
+fn build_residuals(
+  graph: Graph(n, e),
+  zero: e,
+) -> #(Residuals(e), Set(NodeId)) {
   // Get all nodes that appear in edges (both as source and destination)
   let nodes_set =
     extract_all_nodes_from_edges(graph)

@@ -21,7 +21,7 @@ pub fn main() {
     ])
 
   // Find minimum cost to connect all buildings
-  let cables = mst.kruskal_int(buildings)
+  let assert Ok(cables) = mst.kruskal_int(buildings)
   let total_cost = cables.total_weight
   // => 250 (connects all buildings with minimum cable cost)
   // Prints: Minimum cable cost is 250

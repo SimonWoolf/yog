@@ -114,11 +114,12 @@ fn norm_diff_max(m1: Dict(k, Float), m2: Dict(k, Float)) -> Float {
 }
 
 // =============================================================================
-// ARRAY EMULATION (Erlang: tuples, JavaScript: arrays)
+// ARRAY EMULATION (Erlang: array module, JavaScript: arrays)
 // =============================================================================
 
-/// Simple array type for O(1) indexed access.
-/// Uses tuples on Erlang and arrays on JavaScript.
+/// Simple array type for indexed access.
+/// Uses Erlang's `array` module on Erlang (O(log n) access) and native arrays
+/// on JavaScript (O(1) access).
 pub type Array(a)
 
 /// Creates an array from a list.
@@ -178,7 +179,11 @@ pub fn shuffle(list: List(a), rng: random.Rng) -> #(List(a), random.Rng) {
   }
 }
 
-fn do_shuffle(arr: Array(a), i: Int, rng: random.Rng) -> #(Array(a), random.Rng) {
+fn do_shuffle(
+  arr: Array(a),
+  i: Int,
+  rng: random.Rng,
+) -> #(Array(a), random.Rng) {
   case i <= 0 {
     True -> #(arr, rng)
     False -> {

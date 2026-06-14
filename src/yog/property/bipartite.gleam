@@ -164,32 +164,40 @@ pub fn partition(graph: Graph(n, e)) -> Option(Partition) {
 pub fn maximum_matching(
   graph: Graph(n, e),
   partition: Partition,
-) -> List(#(NodeId, NodeId)) {
-  // Start with empty matching
-  let matching = Matching(left_to_right: dict.new(), right_to_left: dict.new())
+) -> Result(List(#(NodeId, NodeId)), String) {
+  case graph.kind {
+    model.Directed -> Error("maximum_matching/2 requires an undirected graph")
+    model.Undirected -> {
+      // Start with empty matching
+      let matching =
+        Matching(left_to_right: dict.new(), right_to_left: dict.new())
 
-  // Try to find augmenting path from each left vertex
-  let left_list = set.to_list(partition.left)
-  let final_matching =
-    list.fold(left_list, matching, fn(current_matching, left_node) {
-      let visited = set.new()
-      case
-        find_augmenting_path(
-          graph,
-          left_node,
-          partition,
-          current_matching,
-          visited,
-        )
-      {
-        None -> current_matching
-        Some(updated_matching) -> updated_matching
-      }
-    })
+      // Try to find augmenting path from each left vertex
+      let left_list = set.to_list(partition.left)
+      let final_matching =
+        list.fold(left_list, matching, fn(current_matching, left_node) {
+          let visited = set.new()
+          case
+            find_augmenting_path(
+              graph,
+              left_node,
+              partition,
+              current_matching,
+              visited,
+            )
+          {
+            None -> current_matching
+            Some(updated_matching) -> updated_matching
+          }
+        })
 
-  dict.fold(final_matching.left_to_right, [], fn(acc, left, right) {
-    [#(left, right), ..acc]
-  })
+      Ok(
+        dict.fold(final_matching.left_to_right, [], fn(acc, left, right) {
+          [#(left, right), ..acc]
+        }),
+      )
+    }
+  }
 }
 
 type Matching {

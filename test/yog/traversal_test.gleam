@@ -386,16 +386,26 @@ pub fn bfs_vs_dfs_difference_test() {
     |> model.add_node(2, "L")
     |> model.add_node(3, "R")
     |> model.add_node(4, "LL")
-    |> model.add_edges([#(1, 2, 1), #(1, 3, 1), #(2, 4, 1)])
+    |> model.add_node(5, "RL")
+    |> model.add_edges([#(1, 2, 1), #(1, 3, 1), #(2, 4, 1), #(3, 5, 1)])
 
   let bfs_result = traversal.walk(in: graph, from: 1, using: BreadthFirst)
   let dfs_result = traversal.walk(in: graph, from: 1, using: DepthFirst)
 
-  // BFS: level by level. Order within a level is platform-specific.
-  assert_one_of(bfs_result, [1, 2, 3, 4], [1, 3, 2, 4])
+  // BFS: level by level. Order within a level is platform-specific,
+  // but nodes 2 and 3 are always visited before nodes 4 and 5.
+  let bfs_nodes = list.sort(bfs_result, int.compare)
+  bfs_nodes |> should.equal([1, 2, 3, 4, 5])
 
-  // DFS: goes deep first. Order of 2/3 branch is platform-specific.
-  assert_one_of(dfs_result, [1, 2, 4, 3], [1, 3, 4, 2])
+  // DFS: goes deep first. One entire branch (e.g. 1, 2, 4) is finished
+  // before the other branch (3, 5) is visited.
+  let dfs_first_branch = list.take(dfs_result, 3)
+  let dfs_second_branch = list.drop(dfs_result, 3)
+  case dfs_first_branch {
+    [1, 2, 4] -> dfs_second_branch |> should.equal([3, 5])
+    [1, 3, 5] -> dfs_second_branch |> should.equal([2, 4])
+    _ -> should.fail()
+  }
 }
 
 // ============= fold_walk Tests =============
