@@ -87,6 +87,9 @@
 ////   - Partition extraction (independent sets)
 ////   - Maximum matching (augmenting path algorithm)
 ////
+//// - **`yog/matching`** - Matching in general graphs
+////   - Edmonds' blossom algorithm for maximum cardinality and maximum weight matching
+////
 //// ### Data Structures
 //// - **`yog/disjoint_set`** - Union-Find / Disjoint Set
 ////   - Path compression and union by rank

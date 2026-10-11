@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- **`yog/matching`** — Maximum matching in general (non-bipartite) undirected
+  graphs via Edmonds' weighted blossom algorithm:
+  - `maximum_matching/1` - maximum cardinality matching
+  - `maximum_weight_matching/2` - maximum total weight matching
+  - `max_cardinality_weight_matching/2` - heaviest among maximum cardinality
+    matchings (negate weights for minimum weight perfect matching)
+
 ### Breaking Changes
 
 - **Graph-kind guards for undirected-only algorithms** — Several algorithms that

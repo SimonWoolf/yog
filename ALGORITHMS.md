@@ -51,6 +51,7 @@ Specialized BFS-based algorithms for graphs with uniform edge weights (hop count
 | Algorithm | Module | Use When | Time Complexity |
 | --------- | ------ | -------- | --------------- |
 | **Edmonds-Karp** | `yog/flow/max_flow` | Maximum flow, bipartite matching, network optimization | O(VE²) |
+| **Edmonds' Blossom** | `yog/matching` | Maximum (weight) matching in general graphs, pairing | O(V³ log V) |
 | **Gale-Shapley** | `yog/property/bipartite` | Stable matching, college admissions | O(n²) |
 | **Network Simplex** | `yog/flow/network_simplex` | Global minimum cost flow optimization | O(V²E) worst-case |
 
